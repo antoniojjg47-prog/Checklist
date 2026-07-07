@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>La Guaracha · Horario de personal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600;700&family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#F6F2EA;
+    --paper:#FCFAF6;
+    --ink:#241F1B;
+    --ink-soft:#5A5249;
+    --green:#1F4B3B;
+    --green-soft:#E7EFE9;
+    --amber:#C98A1F;
+    --amber-soft:#FBF0DD;
+    --red:#8F2A2A;
+    --red-soft:#F7E9E7;
+    --line:#DCD4C6;
+    --shadow: 0 1px 2px rgba(36,31,27,0.06), 0 8px 24px rgba(36,31,27,0.06);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    padding:24px 16px 80px;
+  }
+  .wrap{max-width:1400px;margin:0 auto;}
+
+  /* HEADER */
+  .brand{
+    text-align:center;
+    padding:8px 0 20px;
+    position:relative;
+  }
+  .brand .eyebrow{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.35em;
+    font-size:15px;
+    color:var(--ink-soft);
+  }
+  .brand h1{
+    font-family:'Dancing Script',cursive;
+    font-weight:700;
+    font-size:64px;
+    margin:2px 0 6px;
+    color:var(--ink);
+    line-height:1;
+  }
+  .brand .est{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.3em;
+    font-size:13px;
+    color:var(--ink-soft);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+  }
+  .brand .est::before,.brand .est::after{
+    content:'';
+    height:1px;
+    width:60px;
+    background:var(--line);
+  }
+
+  /* NAV */
+  .nav{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:6px;
+    flex-wrap:wrap;
+  }
+  .nav a{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.08em;
+    font-size:13px;
+    text-decoration:none;
+    color:var(--ink-soft);
+    border:1px solid var(--line);
+    background:var(--paper);
+    padding:7px 14px;
+    border-radius:999px;
+  }
+  .nav a.active{background:var(--green);color:#fff;border-color:var(--green);}
+
+  /* TOOLBAR */
+  .toolbar{
+    position:sticky;
+    top:0;
+    z-index:20;
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+    padding:10px 0;
+  }
+  .toolbar button{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    padding:9px 16px;
+    border-radius:999px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:transform .1s ease;
+  }
+  .toolbar button:hover{transform:translateY(-1px);}
+  .toolbar button.primary{background:var(--green);color:#fff;border-color:var(--green);}
+  .status{
+    font-size:12px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin-bottom:8px;
+    min-height:14px;
+  }
+
+  /* WEEK BAR */
+  .week-bar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:12px;
+    flex-wrap:wrap;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:12px 18px;
+    margin-bottom:18px;
+  }
+  .week-bar label{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.08em;
+    font-size:14px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .week-bar input[type="date"]{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:7px 10px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    outline:none;
+    background:#fff;
+  }
+  .week-bar input[type="date"]:focus{border-color:var(--green);}
+  .week-range{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.04em;
+    font-size:15px;
+    color:var(--green);
+  }
+
+  /* ADD WORKER */
+  .add-worker{
+    display:flex;
+    justify-content:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+  .add-worker input{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:9px 12px;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    outline:none;
+    background:var(--paper);
+  }
+  .add-worker input#newWorkerName{width:220px;max-width:60vw;}
+  .add-worker input#newWorkerHours{width:130px;}
+  .add-worker button{
+    border:1px solid var(--green);
+    background:var(--green);
+    color:#fff;
+    border-radius:8px;
+    padding:9px 16px;
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.05em;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  /* TABLE */
+  .table-wrap{
+    overflow-x:auto;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+  }
+  table.schedule{
+    border-collapse:collapse;
+    width:100%;
+    min-width:1300px;
+  }
+  table.schedule th, table.schedule td{
+    border:1px solid var(--line);
+    padding:11px 12px;
+    font-size:15.5px;
+    text-align:center;
+    vertical-align:middle;
+  }
+  table.schedule thead th{
+    background:var(--green);
+    color:#fff;
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.05em;
+    font-size:14.5px;
+    white-space:nowrap;
+  }
+  table.schedule td.name-cell{
+    text-align:left;
+    min-width:160px;
+    background:var(--paper);
+  }
+  .name-input{
+    border:none;
+    background:transparent;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:16.5px;
+    width:100%;
+    outline:none;
+    padding:2px;
+  }
+  .name-input:focus{outline:1px solid var(--green);border-radius:4px;}
+  .day-cell{
+    position:relative;
+    min-width:128px;
+    transition:background .15s;
+  }
+  .day-cell:hover{background:var(--green-soft);}
+  .cell-content{
+    cursor:pointer;
+    padding-top:2px;
+  }
+  .cell-empty{
+    color:#b8b0a2;
+    font-size:14px;
+  }
+  .day-cell .hours{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:19px;
+    color:var(--green);
+  }
+  .day-cell .times{
+    font-size:13px;
+    color:var(--ink-soft);
+    line-height:1.4;
+    margin-top:2px;
+  }
+  .cell-actions{
+    position:absolute;
+    top:3px;
+    right:3px;
+    display:flex;
+    gap:3px;
+    opacity:0;
+    transition:opacity .15s;
+  }
+  .day-cell:hover .cell-actions{opacity:1;}
+  .cell-icon-btn{
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:5px;
+    font-size:12px;
+    line-height:1;
+    padding:4px 5px;
+    cursor:pointer;
+    color:var(--ink-soft);
+  }
+  .cell-icon-btn:hover{background:var(--green);color:#fff;border-color:var(--green);}
+  .contract-input{
+    width:72px;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:6px 7px;
+    text-align:center;
+    font-family:'Inter',sans-serif;
+    font-size:15px;
+    outline:none;
+    background:#fff;
+  }
+  .contract-input:focus{border-color:var(--green);}
+  .assigned-cell{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:16.5px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+  }
+  .assigned-cell.over{
+    background:var(--red-soft);
+    color:var(--red);
+    font-weight:700;
+    border-radius:6px;
+  }
+  .assigned-cell.ok{
+    color:var(--green);
+    font-weight:700;
+  }
+  .actions-cell{
+    white-space:nowrap;
+    min-width:110px;
+  }
+  .row-icon-btn{
+    border:1px solid var(--line);
+    background:var(--paper);
+    border-radius:6px;
+    font-size:14px;
+    padding:5px 7px;
+    cursor:pointer;
+    color:var(--ink-soft);
+    margin-right:4px;
+  }
+  .row-icon-btn:hover{background:var(--green);color:#fff;border-color:var(--green);}
+  .row-del{
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:#B5453B;
+    cursor:pointer;
+    font-size:14px;
+    padding:5px 7px;
+    border-radius:6px;
+    opacity:0.75;
+    transition:opacity .15s;
+  }
+  .row-del:hover{opacity:1;background:var(--red-soft);}
+  .empty-state{
+    text-align:center;
+    padding:40px 20px;
+    color:var(--ink-soft);
+    font-size:14px;
+  }
+
+  .legend{
+    display:flex;
+    justify-content:center;
+    gap:18px;
+    flex-wrap:wrap;
+    margin-top:14px;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .legend .swatch{
+    display:inline-block;
+    width:12px;height:12px;
+    border-radius:3px;
+    margin-right:5px;
+    vertical-align:middle;
+  }
+  .legend .swatch.over{background:var(--red-soft);border:1px solid var(--red);}
+  .legend .swatch.ok{background:var(--green-soft);border:1px solid var(--green);}
+
+  .footer-brand{
+    text-align:center;
+    margin-top:34px;
+    color:var(--ink-soft);
+  }
+  .footer-brand .line{
+    display:flex;align-items:center;justify-content:center;gap:16px;
+  }
+  .footer-brand .line::before,.footer-brand .line::after{
+    content:'';height:1px;width:100px;background:var(--line);
+  }
+  .footer-brand small{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.3em;
+    font-size:11px;
+  }
+  .footer-brand .script{
+    font-family:'Dancing Script',cursive;
+    font-size:28px;
+    font-weight:700;
+    color:var(--ink);
+    margin:4px 0;
+  }
+
+  /* MODAL */
+  .modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(36,31,27,0.55);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index:100;
+    padding:20px;
+  }
+  .modal-overlay.open{display:flex;}
+  .modal-box{
+    background:var(--paper);
+    border-radius:14px;
+    max-width:420px;
+    width:100%;
+    max-height:85vh;
+    display:flex;
+    flex-direction:column;
+    box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    overflow:hidden;
+  }
+  .modal-head{
+    padding:16px 20px;
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.06em;
+    font-size:16px;
+    background:var(--ink);
+    color:#fff;
+  }
+  .modal-body{
+    padding:18px 20px;
+    font-size:14px;
+    color:var(--ink);
+    overflow-y:auto;
+  }
+  .split-toggle{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-size:13.5px;
+    font-weight:600;
+    margin-bottom:16px;
+    cursor:pointer;
+  }
+  .split-toggle input{width:16px;height:16px;}
+  .shift-block{margin-bottom:14px;}
+  .shift-label{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.06em;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-bottom:6px;
+  }
+  .time-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .time-row input[type="time"]{
+    flex:1;
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:'Inter',sans-serif;
+    font-size:14px;
+    outline:none;
+    background:#fff;
+  }
+  .time-row input[type="time"]:focus{border-color:var(--green);}
+  .shift-total{
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.05em;
+    font-size:16px;
+    color:var(--green);
+    text-align:center;
+    padding-top:6px;
+    border-top:1px dashed var(--line);
+  }
+  .modal-foot{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    padding:14px 20px;
+    border-top:1px solid var(--line);
+  }
+  .modal-foot .right-group{display:flex;gap:10px;}
+  .modal-foot button{
+    border:none;
+    border-radius:8px;
+    padding:9px 16px;
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:13.5px;
+    cursor:pointer;
+  }
+  .modal-foot button.ghost{background:transparent;color:var(--ink-soft);}
+  .modal-foot button.primary{background:var(--green);color:#fff;}
+  .modal-foot button.danger{background:var(--red);color:#fff;}
+
+  @media (max-width:860px){
+    .brand h1{font-size:48px;}
+  }
+
+  @media print{
+    body{background:#fff;padding:0;}
+    .toolbar,.status,.add-worker,.modal-overlay,.nav,.row-del,.legend,.user-bar{display:none !important;}
+    .wrap{max-width:100%;}
+    .table-wrap{box-shadow:none;overflow-x:visible;}
+  }
+
+  /* AUTH GUARD */
+  .auth-checking{
+    display:none;
+    min-height:100vh;
+    align-items:center;
+    justify-content:center;
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.08em;
+    color:var(--ink-soft);
+    font-size:15px;
+  }
+  body.checking-auth .auth-checking{display:flex;}
+  body.checking-auth .wrap{display:none;}
+  .user-bar{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    margin-bottom:10px;
+    font-size:12px;
+    color:var(--ink-soft);
+  }
+  .user-bar button{
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink-soft);
+    font-family:'Inter',sans-serif;
+    font-size:12px;
+    padding:4px 10px;
+    border-radius:999px;
+    cursor:pointer;
+  }
+  .user-bar button:hover{background:var(--red-soft);color:var(--red);border-color:var(--red);}
+</style>
+</head>
+<body class="checking-auth">
+<div class="auth-checking" id="authChecking">Comprobando sesión...</div>
+<div class="wrap">
+
+  <div class="nav">
+    <a href="index.html">📋 Tareas de cocina</a>
+    <a href="compra.html">🛒 Lista de la compra</a>
+    <a href="horario.html" class="active">🗓 Horario de personal</a>
+  </div>
+
+  <div class="user-bar">
+    <span id="userEmailLabel"></span>
+    <button id="btnLogout">🚪 Salir</button>
+  </div>
+
+  <div class="toolbar">
+    <button class="primary" id="btnShareExcel">📊 Compartir Excel</button>
+    <button id="btnPrint">🖨 Imprimir</button>
+  </div>
+  <div class="status" id="status"></div>
+
+  <div class="brand">
+    <div class="eyebrow">BAR RESTAURANTE</div>
+    <h1>la guaracha</h1>
+    <div class="est">CONFIGURADOR DE HORARIOS DE PERSONAL</div>
+  </div>
+
+  <div class="week-bar">
+    <label>🗓 SEMANA DEL (LUNES)</label>
+    <input type="date" id="weekStart">
+    <span class="week-range" id="weekRangeLabel"></span>
+  </div>
+
+  <div class="add-worker">
+    <input type="text" id="newWorkerName" placeholder="Nombre del trabajador...">
+    <input type="number" id="newWorkerHours" placeholder="Horas contrato/sem." min="0" step="0.5">
+    <button id="btnAddWorker">+ Añadir trabajador</button>
+  </div>
+
+  <div class="table-wrap">
+    <table class="schedule">
+      <thead>
+        <tr id="scheduleHead"></tr>
+      </thead>
+      <tbody id="scheduleBody"></tbody>
+    </table>
+    <div class="empty-state" id="emptyState" style="display:none;">Todavía no hay trabajadores. Añade el primero arriba.</div>
+  </div>
+
+  <div class="legend">
+    <span><span class="swatch ok"></span>Horas asignadas dentro del contrato</span>
+    <span><span class="swatch over"></span>Horas asignadas por encima del contrato (horas extra)</span>
+  </div>
+
+  <div class="footer-brand">
+    <div class="line"></div>
+    <div class="script">la guaracha</div>
+    <small>EST. 2025</small>
+  </div>
+</div>
+
+<!-- Modal genérico de confirmación -->
+<div class="modal-overlay" id="confirmOverlay">
+  <div class="modal-box">
+    <div class="modal-head" id="confirmTitle">Confirmar</div>
+    <div class="modal-body" id="confirmMsg"></div>
+    <div class="modal-foot">
+      <button class="ghost" id="confirmCancel">Cancelar</button>
+      <button class="danger" id="confirmOk">Sí, continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de edición de turno -->
+<div class="modal-overlay" id="shiftOverlay">
+  <div class="modal-box">
+    <div class="modal-head" id="shiftModalTitle">Editar turno</div>
+    <div class="modal-body">
+      <label class="split-toggle">
+        <input type="checkbox" id="shiftSplit"> Turno partido (dos tramos)
+      </label>
+      <div class="shift-block">
+        <div class="shift-label">TRAMO 1</div>
+        <div class="time-row">
+          <input type="time" id="shift1In">
+          <span>–</span>
+          <input type="time" id="shift1Out">
+        </div>
+      </div>
+      <div class="shift-block" id="shift2Block" style="display:none;">
+        <div class="shift-label">TRAMO 2</div>
+        <div class="time-row">
+          <input type="time" id="shift2In">
+          <span>–</span>
+          <input type="time" id="shift2Out">
+        </div>
+      </div>
+      <div class="shift-total" id="shiftTotalPreview">Total: 0h</div>
+    </div>
+    <div class="modal-foot">
+      <button class="ghost" id="shiftClear">Borrar día</button>
+      <div class="right-group">
+        <button class="ghost" id="shiftCancel">Cancelar</button>
+        <button class="primary" id="shiftSave">Guardar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK (versión "compat", API clásica con firebase.xxx) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.js"></script>
+
+<script>
+/* ==========================================================================
+   CONFIGURACIÓN DE FIREBASE
+   Mismo proyecto que index.html / compra.html, documento propio
+   (checklist/horario) para no mezclar con las otras listas.
+   ========================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyC2YAldQ3Ple_ZFN9rr74B6XXFjTFwkzYM",
+  authDomain: "checklist-830bc.firebaseapp.com",
+  projectId: "checklist-830bc",
+  storageBucket: "checklist-830bc.firebasestorage.app",
+  messagingSenderId: "1041357310906",
+  appId: "1:1041357310906:web:721e48a5430a00cee96b83"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const stateDocRef = db.collection('checklist').doc('horario');
+
+const DAYS = [
+  { key:'lunes',     label:'Lunes' },
+  { key:'martes',    label:'Martes' },
+  { key:'miercoles', label:'Miércoles' },
+  { key:'jueves',    label:'Jueves' },
+  { key:'viernes',   label:'Viernes' },
+  { key:'sabado',    label:'Sábado' },
+  { key:'domingo',   label:'Domingo' }
+];
+
+const DEFAULT_STATE = { weekStart: '', workers: [] };
+
+function mkWorker(name, contractedHours){
+  const schedule = {};
+  DAYS.forEach(d=> schedule[d.key] = []);
+  return { id: cryptoId(), name, contractedHours: contractedHours || 0, schedule };
+}
+function cryptoId(){
+  return 'w-' + Math.random().toString(36).slice(2,10) + Date.now().toString(36);
+}
+
+let state = null;
+let saveTimer = null;
+let isFirstSnapshot = true;
+let editing = null;
+let dayClipboard = null;
+let weekClipboard = null;
+
+function computeWeekRangeLabel(startStr){
+  if(!startStr) return '';
+  const start = new Date(startStr + 'T00:00:00');
+  if(isNaN(start.getTime())) return '';
+  const end = new Date(start);
+  end.setDate(end.getDate() + 6);
+  const fmt = d => d.toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' });
+  return `Semana del ${fmt(start)} al ${fmt(end)}`;
+}
+
+function setStatus(msg, timeout=2000){
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  if(timeout){
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>{ el.textContent=''; }, timeout);
+  }
+}
+
+/* ---------- Modal de confirmación ---------- */
+function showConfirm(message, onConfirm){
+  const overlay = document.getElementById('confirmOverlay');
+  document.getElementById('confirmMsg').textContent = message;
+  overlay.classList.add('open');
+
+  const okBtn = document.getElementById('confirmOk');
+  const cancelBtn = document.getElementById('confirmCancel');
+
+  function cleanup(){
+    overlay.classList.remove('open');
+    okBtn.removeEventListener('click', onOk);
+    cancelBtn.removeEventListener('click', onCancel);
+  }
+  function onOk(){ cleanup(); onConfirm(); }
+  function onCancel(){ cleanup(); }
+
+  okBtn.addEventListener('click', onOk);
+  cancelBtn.addEventListener('click', onCancel);
+}
+
+/* ---------- Firebase: sincronización en tiempo real (requiere sesión ya iniciada) ---------- */
+async function initFirebase(){
+  setStatus('Conectando...', 0);
+
+  stateDocRef.onSnapshot((snap)=>{
+    if(snap.metadata.hasPendingWrites){
+      return;
+    }
+    if(snap.exists){
+      const data = snap.data();
+      state = data;
+      if(typeof state.weekStart !== 'string') state.weekStart = '';
+      if(!Array.isArray(state.workers)) state.workers = [];
+      state.workers.forEach(w=>{
+        if(!w.schedule) w.schedule = {};
+        DAYS.forEach(d=>{ if(!Array.isArray(w.schedule[d.key])) w.schedule[d.key] = []; });
+        if(typeof w.contractedHours !== 'number') w.contractedHours = 0;
+      });
+    } else if(isFirstSnapshot){
+      state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      stateDocRef.set(state).catch(err=>console.error(err));
+    }
+    isFirstSnapshot = false;
+    render();
+    setStatus('Sincronizado ✓');
+  }, (err)=>{
+    console.error(err);
+    setStatus('Error de conexión con Firebase', 5000);
+  });
+}
+
+function queueSave(){
+  setStatus('Guardando...', 0);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{
+      await stateDocRef.set(state);
+      setStatus('Guardado ✓');
+    }catch(e){
+      console.error(e);
+      setStatus('No se pudo guardar (sin conexión)');
+    }
+  }, 400);
+}
+
+/* ---------- Cálculo de horas ---------- */
+function shiftDuration(entrada, salida){
+  if(!entrada || !salida) return 0;
+  const [eh,em] = entrada.split(':').map(Number);
+  const [sh,sm] = salida.split(':').map(Number);
+  let start = eh*60+em, end = sh*60+sm;
+  if(end <= start) end += 24*60; // turno que cruza medianoche
+  return Math.round(((end-start)/60)*100)/100;
+}
+function dayHours(shifts){
+  return (shifts||[]).reduce((sum,s)=> sum + shiftDuration(s.entrada, s.salida), 0);
+}
+function weekHours(worker){
+  return DAYS.reduce((sum,d)=> sum + dayHours(worker.schedule[d.key]), 0);
+}
+function fmtHours(h){
+  return (Math.round(h*100)/100).toString().replace('.', ',');
+}
+
+/* ---------- Render ---------- */
+function render(){
+  document.getElementById('weekStart').value = state.weekStart || '';
+  document.getElementById('weekRangeLabel').textContent = computeWeekRangeLabel(state.weekStart);
+
+  const head = document.getElementById('scheduleHead');
+  head.innerHTML = '<th>Trabajador</th>' +
+    DAYS.map(d=>`<th>${d.label}</th>`).join('') +
+    '<th>Horas contrato</th><th>Horas asignadas</th><th>Acciones</th>';
+
+  const tbody = document.getElementById('scheduleBody');
+  tbody.innerHTML = '';
+  document.getElementById('emptyState').style.display = state.workers.length ? 'none' : 'block';
+
+  state.workers.forEach(worker=>{
+    const tr = document.createElement('tr');
+
+    const nameTd = document.createElement('td');
+    nameTd.className = 'name-cell';
+    nameTd.innerHTML = `<input type="text" class="name-input" value="${escapeAttr(worker.name)}" placeholder="Nombre">`;
+    tr.appendChild(nameTd);
+
+    DAYS.forEach(d=>{
+      const td = document.createElement('td');
+      td.className = 'day-cell';
+      const shifts = worker.schedule[d.key] || [];
+      const hours = dayHours(shifts);
+      const contentHtml = shifts.length === 0
+        ? '<div class="cell-empty">+ Añadir</div>'
+        : `<div class="hours">${fmtHours(hours)}h</div><div class="times">${shifts.map(s=> `${s.entrada||'--:--'}–${s.salida||'--:--'}`).join('<br>')}</div>`;
+      td.innerHTML = `
+        <div class="cell-actions">
+          ${shifts.length ? '<button type="button" class="cell-icon-btn cell-copy" title="Copiar turno">⧉</button>' : ''}
+          ${dayClipboard ? '<button type="button" class="cell-icon-btn cell-paste" title="Pegar turno">📥</button>' : ''}
+        </div>
+        <div class="cell-content">${contentHtml}</div>
+      `;
+      td.querySelector('.cell-content').addEventListener('click', ()=> openShiftModal(worker.id, d.key));
+      const copyBtn = td.querySelector('.cell-copy');
+      if(copyBtn) copyBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        dayClipboard = JSON.parse(JSON.stringify(shifts));
+        setStatus('Turno copiado — pégalo en otra celda con 📥', 2500);
+        render();
+      });
+      const pasteBtn = td.querySelector('.cell-paste');
+      if(pasteBtn) pasteBtn.addEventListener('click', (e)=>{
+        e.stopPropagation();
+        worker.schedule[d.key] = JSON.parse(JSON.stringify(dayClipboard));
+        render();
+        queueSave();
+        setStatus('Turno pegado ✓');
+      });
+      tr.appendChild(td);
+    });
+
+    const contractTd = document.createElement('td');
+    contractTd.innerHTML = `<input type="number" class="contract-input" min="0" step="0.5" value="${worker.contractedHours}">`;
+    tr.appendChild(contractTd);
+
+    const assignedTd = document.createElement('td');
+    const total = weekHours(worker);
+    const over = total > worker.contractedHours;
+    assignedTd.className = 'assigned-cell ' + (over ? 'over' : 'ok');
+    assignedTd.textContent = `${fmtHours(total)}h` + (over ? ` (+${fmtHours(total-worker.contractedHours)}h extra)` : '');
+    tr.appendChild(assignedTd);
+
+    const actionsTd = document.createElement('td');
+    actionsTd.className = 'actions-cell';
+    actionsTd.innerHTML = `
+      <button type="button" class="row-icon-btn row-copy" title="Copiar semana completa">⧉</button>
+      ${weekClipboard ? '<button type="button" class="row-icon-btn row-paste" title="Pegar semana completa">📥</button>' : ''}
+      <button type="button" class="row-del" title="Eliminar trabajador">✕</button>
+    `;
+    tr.appendChild(actionsTd);
+
+    tbody.appendChild(tr);
+
+    actionsTd.querySelector('.row-copy').addEventListener('click', ()=>{
+      weekClipboard = JSON.parse(JSON.stringify(worker.schedule));
+      setStatus(`Semana de ${worker.name || 'trabajador'} copiada — pégala en otra fila con 📥`, 3000);
+      render();
+    });
+    const rowPasteBtn = actionsTd.querySelector('.row-paste');
+    if(rowPasteBtn) rowPasteBtn.addEventListener('click', ()=>{
+      worker.schedule = JSON.parse(JSON.stringify(weekClipboard));
+      render();
+      queueSave();
+      setStatus('Semana pegada ✓');
+    });
+
+    nameTd.querySelector('.name-input').addEventListener('input', e=>{
+      worker.name = e.target.value;
+      queueSave();
+    });
+    contractTd.querySelector('.contract-input').addEventListener('input', e=>{
+      worker.contractedHours = parseFloat(e.target.value) || 0;
+      const tot = weekHours(worker);
+      const isOver = tot > worker.contractedHours;
+      assignedTd.className = 'assigned-cell ' + (isOver ? 'over' : 'ok');
+      assignedTd.textContent = `${fmtHours(tot)}h` + (isOver ? ` (+${fmtHours(tot-worker.contractedHours)}h extra)` : '');
+      queueSave();
+    });
+    actionsTd.querySelector('.row-del').addEventListener('click', ()=>{
+      showConfirm(`¿Eliminar a ${worker.name || 'este trabajador'} del horario?`, ()=>{
+        state.workers = state.workers.filter(w=>w.id!==worker.id);
+        render();
+        queueSave();
+      });
+    });
+  });
+}
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+function escapeAttr(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ---------- Semana ---------- */
+document.getElementById('weekStart').addEventListener('change', e=>{
+  state.weekStart = e.target.value;
+  document.getElementById('weekRangeLabel').textContent = computeWeekRangeLabel(state.weekStart);
+  queueSave();
+});
+
+/* ---------- Alta de trabajador ---------- */
+document.getElementById('btnAddWorker').addEventListener('click', ()=>{
+  const nameInput = document.getElementById('newWorkerName');
+  const hoursInput = document.getElementById('newWorkerHours');
+  const name = nameInput.value.trim();
+  if(!name) return;
+  const hours = parseFloat(hoursInput.value) || 0;
+  state.workers.push(mkWorker(name, hours));
+  nameInput.value = '';
+  hoursInput.value = '';
+  render();
+  queueSave();
+});
+['newWorkerName','newWorkerHours'].forEach(id=>{
+  document.getElementById(id).addEventListener('keydown', e=>{
+    if(e.key==='Enter'){ e.preventDefault(); document.getElementById('btnAddWorker').click(); }
+  });
+});
+
+/* ---------- Modal de edición de turno ---------- */
+function openShiftModal(workerId, dayKey){
+  const worker = state.workers.find(w=>w.id===workerId);
+  if(!worker) return;
+  editing = { workerId, day: dayKey };
+  const shifts = worker.schedule[dayKey] || [];
+  const isSplit = shifts.length > 1;
+
+  document.getElementById('shiftModalTitle').textContent =
+    `${worker.name || 'Trabajador'} — ${DAYS.find(d=>d.key===dayKey).label}`;
+  document.getElementById('shiftSplit').checked = isSplit;
+  document.getElementById('shift1In').value = shifts[0]?.entrada || '';
+  document.getElementById('shift1Out').value = shifts[0]?.salida || '';
+  document.getElementById('shift2In').value = shifts[1]?.entrada || '';
+  document.getElementById('shift2Out').value = shifts[1]?.salida || '';
+  document.getElementById('shift2Block').style.display = isSplit ? 'block' : 'none';
+  updateShiftPreview();
+  document.getElementById('shiftOverlay').classList.add('open');
+}
+
+function updateShiftPreview(){
+  const split = document.getElementById('shiftSplit').checked;
+  const e1 = document.getElementById('shift1In').value, s1 = document.getElementById('shift1Out').value;
+  const e2 = document.getElementById('shift2In').value, s2 = document.getElementById('shift2Out').value;
+  let total = shiftDuration(e1,s1);
+  if(split) total += shiftDuration(e2,s2);
+  document.getElementById('shiftTotalPreview').textContent = `Total: ${fmtHours(total)}h`;
+}
+
+document.getElementById('shiftSplit').addEventListener('change', e=>{
+  document.getElementById('shift2Block').style.display = e.target.checked ? 'block' : 'none';
+  updateShiftPreview();
+});
+['shift1In','shift1Out','shift2In','shift2Out'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', updateShiftPreview);
+});
+
+document.getElementById('shiftCancel').addEventListener('click', ()=>{
+  document.getElementById('shiftOverlay').classList.remove('open');
+  editing = null;
+});
+document.getElementById('shiftClear').addEventListener('click', ()=>{
+  if(!editing) return;
+  const worker = state.workers.find(w=>w.id===editing.workerId);
+  if(worker){
+    worker.schedule[editing.day] = [];
+    render();
+    queueSave();
+  }
+  document.getElementById('shiftOverlay').classList.remove('open');
+  editing = null;
+});
+document.getElementById('shiftSave').addEventListener('click', ()=>{
+  if(!editing) return;
+  const worker = state.workers.find(w=>w.id===editing.workerId);
+  if(!worker) return;
+  const split = document.getElementById('shiftSplit').checked;
+  const e1 = document.getElementById('shift1In').value, s1 = document.getElementById('shift1Out').value;
+  const e2 = document.getElementById('shift2In').value, s2 = document.getElementById('shift2Out').value;
+  const shifts = [];
+  if(e1 && s1) shifts.push({ entrada:e1, salida:s1 });
+  if(split && e2 && s2) shifts.push({ entrada:e2, salida:s2 });
+  worker.schedule[editing.day] = shifts;
+  render();
+  queueSave();
+  document.getElementById('shiftOverlay').classList.remove('open');
+  editing = null;
+});
+
+/* ---------- Imprimir ---------- */
+document.getElementById('btnPrint').addEventListener('click', ()=> window.print());
+
+/* ---------- Exportar / compartir en Excel ---------- */
+function buildExcelBlob(){
+  const cols = DAYS.length + 3;
+  let html = '<table border="1">';
+  const weekLabel = computeWeekRangeLabel(state.weekStart);
+  if(weekLabel){
+    html += `<tr><td colspan="${cols}"><b>${escapeHtml(weekLabel)}</b></td></tr>`;
+  }
+  html += '<tr><th>Trabajador</th>';
+  DAYS.forEach(d=> html += `<th>${d.label}</th>`);
+  html += '<th>Horas contrato</th><th>Horas asignadas</th></tr>';
+  state.workers.forEach(w=>{
+    html += `<tr><td>${escapeHtml(w.name)}</td>`;
+    DAYS.forEach(d=>{
+      const shifts = w.schedule[d.key] || [];
+      const hours = dayHours(shifts);
+      const timesStr = shifts.map(s=>`${s.entrada}-${s.salida}`).join(' / ');
+      const cell = shifts.length ? `${fmtHours(hours)}h (${timesStr})` : '';
+      html += `<td>${escapeHtml(cell)}</td>`;
+    });
+    const total = weekHours(w);
+    html += `<td>${w.contractedHours}h</td><td>${fmtHours(total)}h</td></tr>`;
+  });
+  html += '</table>';
+  return new Blob(['\ufeff', html], { type:'application/vnd.ms-excel' });
+}
+
+async function shareExcel(){
+  if(!state.workers.length){
+    setStatus('Añade al menos un trabajador antes de exportar', 3000);
+    return;
+  }
+  const blob = buildExcelBlob();
+  let file = null;
+  try{
+    file = new File([blob], 'horario-la-guaracha.xls', { type:'application/vnd.ms-excel' });
+  }catch(e){ /* File constructor unsupported: se ignora y se usa solo la descarga */ }
+
+  if(file && navigator.canShare && navigator.canShare({ files:[file] })){
+    try{
+      await navigator.share({
+        files:[file],
+        title:'Horario de personal — La Guaracha',
+        text:'Horario de personal generado desde el configurador de La Guaracha.'
+      });
+      setStatus('Compartido ✓');
+      return;
+    }catch(e){
+      // el usuario canceló el share sheet o falló: seguimos con la descarga
+    }
+  }
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'horario-la-guaracha.xls';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  setStatus('Excel descargado — adjúntalo en tu email o WhatsApp', 4000);
+}
+
+document.getElementById('btnShareExcel').addEventListener('click', shareExcel);
+
+/* ---------- Guard de sesión: exige login con usuario activo antes de cargar la app ---------- */
+auth.onAuthStateChanged(async (user)=>{
+  if(!user){
+    window.location.href = 'login.html';
+    return;
+  }
+  try{
+    const snap = await db.collection('usuarios').doc(user.uid).get();
+    if(!snap.exists || snap.data().activo !== true){
+      await auth.signOut();
+      window.location.href = 'login.html';
+      return;
+    }
+    document.getElementById('userEmailLabel').textContent = user.email || '';
+    document.body.classList.remove('checking-auth');
+    initFirebase();
+  }catch(e){
+    console.error(e);
+    window.location.href = 'login.html';
+  }
+});
+
+document.getElementById('btnLogout').addEventListener('click', async ()=>{
+  await auth.signOut();
+  window.location.href = 'login.html';
+});
+</script>
+</body>
+</html>
