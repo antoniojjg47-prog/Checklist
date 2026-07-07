@@ -524,9 +524,30 @@
   </div>
 </div>
 
+<!-- Firebase SDK (versión "compat", API clásica con firebase.xxx) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.js"></script>
+
 <script>
-/* ---------- Configuración de la API (Google Apps Script / Google Sheets) ---------- */
-const API_URL = 'https://script.google.com/macros/s/AKfycbytbfVTz8kTp4fCIp53PsTWZ_rZYUXXPiXynLavGYpfkdAlydYXftqo0YcmCjvSpRTI4g/exec';
+/* ==========================================================================
+   CONFIGURACIÓN DE FIREBASE
+   Sustituye estos valores por los de TU proyecto (Firebase Console →
+   Configuración del proyecto → tus apps → SDK setup and configuration).
+   ========================================================================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyC2YAldQ3Ple_ZFN9rr74B6XXFjTFwkzYM",
+  authDomain: "checklist-830bc.firebaseapp.com",
+  projectId: "checklist-830bc",
+  storageBucket: "checklist-830bc.firebasestorage.app",
+  messagingSenderId: "1041357310906",
+  appId: "1:1041357310906:web:721e48a5430a00cee96b83"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+const stateDocRef = db.collection('checklist').doc('state');
 
 const DEFAULT_STATE = {
   fecha: { d:'', m:'', y:'' },
@@ -570,6 +591,7 @@ function cryptoId(){
 
 let state = null;
 let saveTimer = null;
+let isFirstSnapshot = true;
 
 function setStatus(msg, timeout=2000){
   const el = document.getElementById('status');
@@ -652,26 +674,41 @@ function showShareModal(text){
   closeBtn.addEventListener('click', onClose);
 }
 
-/* ---------- Carga y guardado usando Google Sheets vía Apps Script ---------- */
-async function loadState(){
-  setStatus('Cargando...', 0);
+/* ---------- Firebase: autenticación anónima + sincronización en tiempo real ---------- */
+async function initFirebase(){
+  setStatus('Conectando...', 0);
   try{
-    const res = await fetch(API_URL, { method:'GET' });
-    const text = await res.text();
-    if(text && text.trim().length>0){
-      const parsed = JSON.parse(text);
-      state = parsed;
+    await auth.signInAnonymously();
+  }catch(e){
+    console.error(e);
+    setStatus('Error de autenticación con Firebase', 5000);
+    return;
+  }
+
+  stateDocRef.onSnapshot((snap)=>{
+    // Si el cambio es nuestra propia escritura optimista (aún no confirmada por el
+    // servidor), lo ignoramos: la pantalla ya refleja ese cambio localmente y
+    // re-renderizar aquí interrumpiría al usuario si está escribiendo algo.
+    if(snap.metadata.hasPendingWrites){
+      return;
+    }
+
+    if(snap.exists){
+      const data = snap.data();
+      state = data;
       if(!state.columns) state.columns = DEFAULT_STATE.columns;
       if(!state.fecha) state.fecha = {d:'',m:'',y:''};
-    } else {
+    } else if(isFirstSnapshot){
       state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+      stateDocRef.set(state).catch(err=>console.error(err));
     }
-    setStatus('Cargado ✓');
-  }catch(e){
-    state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-    setStatus('No se pudo conectar con Google Sheets (usando datos locales)', 4000);
-  }
-  render();
+    isFirstSnapshot = false;
+    render();
+    setStatus('Sincronizado ✓');
+  }, (err)=>{
+    console.error(err);
+    setStatus('Error de conexión con Firebase', 5000);
+  });
 }
 
 function queueSave(){
@@ -679,17 +716,13 @@ function queueSave(){
   clearTimeout(saveTimer);
   saveTimer = setTimeout(async ()=>{
     try{
-      // Content-Type text/plain evita el "preflight" CORS que Apps Script no maneja bien
-      await fetch(API_URL, {
-        method:'POST',
-        headers:{ 'Content-Type':'text/plain;charset=utf-8' },
-        body: JSON.stringify(state)
-      });
+      await stateDocRef.set(state);
       setStatus('Guardado ✓');
     }catch(e){
+      console.error(e);
       setStatus('No se pudo guardar (sin conexión)');
     }
-  }, 500);
+  }, 400);
 }
 
 function render(){
@@ -709,8 +742,8 @@ function render(){
     const done = col.items.filter(i=>i.done).length;
     colEl.innerHTML = `
       <div class="col-head">
-        <h2>${col.icon} ${col.title}</h2>
-        <p>${col.subtitle}</p>
+        <h2>${escapeHtml(col.icon)} ${escapeHtml(col.title)}</h2>
+        <p>${escapeHtml(col.subtitle)}</p>
       </div>
       <div class="items" data-col="${col.id}"></div>
       <div class="add-row" data-col="${col.id}">
@@ -829,7 +862,7 @@ document.getElementById('btnShare').addEventListener('click', ()=>{
   showShareModal(text);
 });
 
-loadState();
+initFirebase();
 </script>
 </body>
 </html>
