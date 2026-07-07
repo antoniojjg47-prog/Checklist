@@ -527,6 +527,9 @@
 <script>
 /* ---------- Configuración de la API (Google Apps Script / Google Sheets) ---------- */
 const API_URL = 'https://script.google.com/macros/s/AKfycbytbfVTz8kTp4fCIp53PsTWZ_rZYUXXPiXynLavGYpfkdAlydYXftqo0YcmCjvSpRTI4g/exec';
+// Clave compartida con el script de Google (debe coincidir exactamente con SHARED_SECRET en Código.gs).
+// No es seguridad "real" (es visible en el código fuente), pero filtra bots y curiosos casuales.
+const API_SECRET = 'guaracha-2026-cambia-esto';
 
 const DEFAULT_STATE = {
   fecha: { d:'', m:'', y:'' },
@@ -656,7 +659,7 @@ function showShareModal(text){
 async function loadState(){
   setStatus('Cargando...', 0);
   try{
-    const res = await fetch(API_URL, { method:'GET' });
+    const res = await fetch(`${API_URL}?secret=${encodeURIComponent(API_SECRET)}`, { method:'GET' });
     const text = await res.text();
     if(text && text.trim().length>0){
       const parsed = JSON.parse(text);
@@ -683,7 +686,7 @@ function queueSave(){
       await fetch(API_URL, {
         method:'POST',
         headers:{ 'Content-Type':'text/plain;charset=utf-8' },
-        body: JSON.stringify(state)
+        body: JSON.stringify({ secret: API_SECRET, data: state })
       });
       setStatus('Guardado ✓');
     }catch(e){
@@ -709,8 +712,8 @@ function render(){
     const done = col.items.filter(i=>i.done).length;
     colEl.innerHTML = `
       <div class="col-head">
-        <h2>${col.icon} ${col.title}</h2>
-        <p>${col.subtitle}</p>
+        <h2>${escapeHtml(col.icon)} ${escapeHtml(col.title)}</h2>
+        <p>${escapeHtml(col.subtitle)}</p>
       </div>
       <div class="items" data-col="${col.id}"></div>
       <div class="add-row" data-col="${col.id}">
