@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Intranet · Proveedores</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<style>
+  .wrap{max-width:1100px;}
+
+  .add-prov{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:18px 20px;
+    margin-bottom:22px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:flex-end;
+  }
+  .add-prov .field{display:flex;flex-direction:column;gap:5px;}
+  .add-prov label{font-family:'Bebas Neue',sans-serif;letter-spacing:0.06em;font-size:11.5px;color:var(--ink-soft);}
+  .add-prov input{
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:8px 10px;
+    font-family:'Inter',sans-serif;
+    font-size:13.5px;
+    outline:none;
+    background:#fff;
+  }
+  .add-prov input:focus{border-color:var(--green);}
+  .add-prov input#newProvNombre{width:180px;}
+  .add-prov input#newProvTelefono{width:130px;}
+  .add-prov input#newProvPedidoMin{width:150px;}
+  .add-prov input#newProvDiaReparto{width:150px;}
+  .add-prov input#newProvNotas{width:200px;}
+  .add-prov button{
+    border:1px solid var(--green);
+    background:var(--green);
+    color:#fff;
+    border-radius:8px;
+    padding:9px 18px;
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.05em;
+    font-size:14px;
+    cursor:pointer;
+  }
+
+  .cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(260px, 1fr));
+    gap:16px;
+  }
+  .prov-card{
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:14px;
+    box-shadow:var(--shadow);
+    padding:16px 18px;
+  }
+  .prov-card h3{
+    margin:0 0 8px;
+    font-family:'Bebas Neue',sans-serif;
+    letter-spacing:0.03em;
+    font-size:18px;
+    color:var(--green);
+  }
+  .prov-card .row{
+    font-size:13.5px;
+    color:var(--ink-soft);
+    margin-bottom:4px;
+  }
+  .prov-card .row b{color:var(--ink);font-weight:600;}
+  .prov-card .actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:8px;
+    margin-top:10px;
+  }
+  .prov-card .actions button{
+    border:1px solid var(--line);
+    background:var(--paper);
+    color:var(--ink-soft);
+    border-radius:6px;
+    padding:5px 9px;
+    font-size:12px;
+    cursor:pointer;
+  }
+  .prov-card .actions button.del:hover{background:var(--red-soft);color:var(--red);border-color:var(--red);}
+  .prov-card .actions button.edit:hover{background:var(--green-soft);color:var(--green);border-color:var(--green);}
+  .empty-state{text-align:center;padding:40px 20px;color:var(--ink-soft);font-size:14px;}
+</style>
+</head>
+<body class="checking-auth">
+<div class="auth-checking" id="authChecking">Comprobando sesión...</div>
+<div class="wrap">
+
+  <div class="nav" id="nav"></div>
+
+  <div class="user-bar">
+    <span id="userEmailLabel"></span>
+    <button id="btnLogout">🚪 Salir</button>
+  </div>
+
+  <div class="page-title">
+    <h1>DIRECTORIO DE PROVEEDORES</h1>
+  </div>
+
+  <div class="status" id="status"></div>
+
+  <div class="add-prov">
+    <div class="field"><label>NOMBRE</label><input type="text" id="newProvNombre" placeholder="Nombre del proveedor"></div>
+    <div class="field"><label>TELÉFONO</label><input type="text" id="newProvTelefono" placeholder="600 000 000"></div>
+    <div class="field"><label>PEDIDO MÍNIMO</label><input type="text" id="newProvPedidoMin" placeholder="ej. 50€ / 10 uds"></div>
+    <div class="field"><label>DÍA DE REPARTO</label><input type="text" id="newProvDiaReparto" placeholder="ej. Lunes y jueves"></div>
+    <div class="field"><label>NOTAS</label><input type="text" id="newProvNotas" placeholder="Opcional"></div>
+    <button id="btnAddProv">+ Añadir proveedor</button>
+  </div>
+
+  <div class="cards" id="provCards"></div>
+  <div class="empty-state" id="emptyState" style="display:none;">Todavía no hay proveedores. Añade el primero arriba.</div>
+
+
+</div>
+
+<!-- Firebase SDK (versión "compat", API clásica con firebase.xxx) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-app-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/10.12.2/firebase-firestore-compat.js"></script>
+<script src="shared.js"></script>
+
+<script>
+function setStatus(msg, timeout=2500){
+  const el = document.getElementById('status');
+  el.textContent = msg;
+  if(timeout){
+    clearTimeout(el._t);
+    el._t = setTimeout(()=>{ el.textContent=''; }, timeout);
+  }
+}
+
+document.getElementById('btnAddProv').addEventListener('click', async ()=>{
+  const nombre = document.getElementById('newProvNombre').value.trim();
+  if(!nombre){ setStatus('El nombre es obligatorio', 3000); return; }
+  const data = {
+    nombre,
+    telefono: document.getElementById('newProvTelefono').value.trim(),
+    pedidoMinimo: document.getElementById('newProvPedidoMin').value.trim(),
+    diaReparto: document.getElementById('newProvDiaReparto').value.trim(),
+    notas: document.getElementById('newProvNotas').value.trim()
+  };
+  try{
+    await db.collection('proveedores').add(data);
+    ['newProvNombre','newProvTelefono','newProvPedidoMin','newProvDiaReparto','newProvNotas'].forEach(id=>{
+      document.getElementById(id).value = '';
+    });
+    setStatus('Proveedor añadido ✓');
+  }catch(err){
+    console.error(err);
+    setStatus('No se pudo añadir el proveedor', 3000);
+  }
+});
+
+function renderProveedores(docs){
+  const container = document.getElementById('provCards');
+  container.innerHTML = '';
+  document.getElementById('emptyState').style.display = docs.length ? 'none' : 'block';
+
+  docs.forEach(({ id, data })=>{
+    const card = document.createElement('div');
+    card.className = 'prov-card';
+    card.innerHTML = `
+      <h3>${escapeHtml(data.nombre)}</h3>
+      ${data.telefono ? `<div class="row">📞 <b>${escapeHtml(data.telefono)}</b></div>` : ''}
+      ${data.pedidoMinimo ? `<div class="row">📦 Pedido mínimo: <b>${escapeHtml(data.pedidoMinimo)}</b></div>` : ''}
+      ${data.diaReparto ? `<div class="row">🚚 Reparto: <b>${escapeHtml(data.diaReparto)}</b></div>` : ''}
+      ${data.notas ? `<div class="row">📝 ${escapeHtml(data.notas)}</div>` : ''}
+      <div class="actions">
+        <button type="button" class="del">✕ Eliminar</button>
+      </div>
+    `;
+    container.appendChild(card);
+    card.querySelector('.del').addEventListener('click', async ()=>{
+      try{
+        await db.collection('proveedores').doc(id).delete();
+        setStatus('Proveedor eliminado ✓');
+      }catch(err){ console.error(err); setStatus('No se pudo eliminar', 3000); }
+    });
+  });
+}
+
+db.collection('proveedores').onSnapshot((snap)=>{
+  const docs = [];
+  snap.forEach(doc=> docs.push({ id: doc.id, data: doc.data() }));
+  docs.sort((a,b)=> (a.data.nombre||'').localeCompare(b.data.nombre||''));
+  renderProveedores(docs);
+}, (err)=>{
+  console.error(err);
+  setStatus('Error al cargar proveedores', 5000);
+});
+
+/* ---------- Guard de sesión + menú ---------- */
+renderNav('proveedores.html');
+initAuthGuard();
+</script>
+</body>
+</html>

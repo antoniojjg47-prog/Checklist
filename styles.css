@@ -1,0 +1,240 @@
+/* ==========================================================================
+   styles.css
+   Diseño común de la intranet (colores, menú, barra de usuario, toolbar,
+   modales, pantalla de "comprobando sesión" y aviso de solo lectura),
+   compartido por todas las páginas. Cambiar el diseño general se hace aquí
+   en vez de en cada página.
+
+   Cada página conserva en su propio <style> solo lo que le es específico
+   (tablas, tarjetas, columnas, formularios propios, etc).
+   ========================================================================== */
+
+:root{
+  --cream:#F6F2EA;
+  --paper:#FCFAF6;
+  --ink:#241F1B;
+  --ink-soft:#5A5249;
+  --green:#1F4B3B;
+  --green-soft:#E7EFE9;
+  --amber:#C98A1F;
+  --amber-soft:#FBF0DD;
+  --red:#8F2A2A;
+  --red-soft:#F7E9E7;
+  --line:#DCD4C6;
+  --shadow: 0 1px 2px rgba(36,31,27,0.06), 0 8px 24px rgba(36,31,27,0.06);
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--cream);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  min-height:100vh;
+  padding:24px 16px 80px;
+}
+.wrap{margin:0 auto;}
+
+/* PAGE TITLE */
+.page-title{
+  text-align:center;
+  padding:8px 0 22px;
+}
+.page-title h1{
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:0.06em;
+  font-size:30px;
+  color:var(--ink);
+  margin:0;
+}
+
+/* NAV */
+.nav{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:6px;
+  flex-wrap:wrap;
+}
+.nav a{
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:0.08em;
+  font-size:13px;
+  text-decoration:none;
+  color:var(--ink-soft);
+  border:1px solid var(--line);
+  background:var(--paper);
+  padding:7px 14px;
+  border-radius:999px;
+}
+.nav a.active{background:var(--green);color:#fff;border-color:var(--green);}
+.nav-admin-only{display:none;}
+
+/* USER BAR */
+.user-bar{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:8px;
+  margin-bottom:18px;
+  font-size:12px;
+  color:var(--ink-soft);
+}
+.user-bar button{
+  border:1px solid var(--line);
+  background:var(--paper);
+  color:var(--ink-soft);
+  font-family:'Inter',sans-serif;
+  font-size:12px;
+  padding:4px 10px;
+  border-radius:999px;
+  cursor:pointer;
+}
+.user-bar button:hover{background:var(--red-soft);color:var(--red);border-color:var(--red);}
+
+/* TOOLBAR */
+.toolbar{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:18px;
+  padding:10px 0;
+}
+.toolbar button{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid var(--line);
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  font-size:13.5px;
+  padding:9px 16px;
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:var(--shadow);
+  transition:transform .1s ease;
+}
+.toolbar button:hover{transform:translateY(-1px);}
+.toolbar button.primary{background:var(--green);color:#fff;border-color:var(--green);}
+.toolbar button.danger{color:var(--red);}
+
+.status{
+  font-size:12px;
+  color:var(--ink-soft);
+  text-align:center;
+  margin-bottom:8px;
+  min-height:14px;
+}
+
+/* MODAL (confirmación, compartir, etc.) */
+.modal-overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(36,31,27,0.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:100;
+  padding:20px;
+}
+.modal-overlay.open{display:flex;}
+.modal-box{
+  background:var(--paper);
+  border-radius:14px;
+  max-width:520px;
+  width:100%;
+  max-height:85vh;
+  display:flex;
+  flex-direction:column;
+  box-shadow:0 20px 60px rgba(0,0,0,0.3);
+  overflow:hidden;
+}
+.modal-head{
+  padding:16px 20px;
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:0.06em;
+  font-size:17px;
+  background:var(--ink);
+  color:#fff;
+}
+.modal-body{
+  padding:18px 20px;
+  font-size:14px;
+  color:var(--ink);
+  overflow-y:auto;
+}
+.modal-body textarea{
+  width:100%;
+  min-height:220px;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:12px;
+  font-family:'Inter',monospace;
+  font-size:12.5px;
+  line-height:1.5;
+  resize:vertical;
+  background:#fff;
+  color:var(--ink);
+}
+.modal-foot{
+  display:flex;
+  justify-content:flex-end;
+  gap:10px;
+  padding:14px 20px;
+  border-top:1px solid var(--line);
+}
+.modal-foot .right-group{display:flex;gap:10px;}
+.modal-foot button{
+  border:none;
+  border-radius:8px;
+  padding:9px 16px;
+  font-family:'Inter',sans-serif;
+  font-weight:600;
+  font-size:13.5px;
+  cursor:pointer;
+}
+.modal-foot button.ghost{background:transparent;color:var(--ink-soft);}
+.modal-foot button.primary{background:var(--green);color:#fff;}
+.modal-foot button.danger{background:var(--red);color:#fff;}
+.modal-hint{
+  font-size:12px;
+  color:var(--ink-soft);
+  margin-top:8px;
+}
+
+/* AVISO DE SOLO LECTURA (páginas con edición restringida por sede) */
+.readonly-banner{
+  display:none;
+  text-align:center;
+  font-size:12px;
+  color:var(--amber);
+  background:var(--amber-soft);
+  border:1px solid var(--amber);
+  border-radius:8px;
+  padding:8px 14px;
+  margin-bottom:14px;
+}
+body.readonly-mode .readonly-banner{display:block;}
+
+/* AUTH GUARD: pantalla de "comprobando sesión" antes de mostrar la página */
+.auth-checking{
+  display:none;
+  min-height:100vh;
+  align-items:center;
+  justify-content:center;
+  font-family:'Bebas Neue',sans-serif;
+  letter-spacing:0.08em;
+  color:var(--ink-soft);
+  font-size:15px;
+}
+body.checking-auth .auth-checking{display:flex;}
+body.checking-auth .wrap{display:none;}
+
+@media print{
+  .toolbar,.status,.modal-overlay,.nav,.user-bar{display:none !important;}
+}
